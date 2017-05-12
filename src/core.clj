@@ -140,10 +140,7 @@
   (outer-join #{{:name "Bob" :movie "Matrix"}
                 {:name "Jim" :movie "Expendibles"}}
               #{{:name "Bob" :food "pizza"}
-                {:name "Edward" :food "speghetti"}})
-  )
+                {:name "Edward" :food "speghetti"}}))
+
 
 (first #{20 2 3 4 5})
-
-
-
