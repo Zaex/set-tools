@@ -55,6 +55,25 @@
                 (transient #{})
                 xrel))))))
 
+(defn left-outer-join
+  "Most of the source has been shamelessly taken from clojure.set/join. Added 1-arty and transient support"
+  ([rel] rel)
+  ([xrel yrel]
+   (let [ks (intersection (set (keys (first xrel)))
+                          (set (keys (first yrel))))]
+     (left-join xrel yrel (zipmap ks ks))))
+  ([xrel yrel km]
+   (if (and (set? xrel) (set? yrel))
+     (let [k (map-invert km)
+           idx (index yrel (vals km))]
+       (persistent!
+        (reduce (fn [ret x]
+                  (if-let [found (idx (rename-keys (select-keys x (keys k)) k))]
+                    (reduce disj! notfound found)
+                    (conj! ret x)))
+                (transient #{})
+                xrel))))))
+
 (defn right-join
   ([rel] rel)
   ([xrel yrel] 
