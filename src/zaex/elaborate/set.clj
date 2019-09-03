@@ -1,4 +1,4 @@
-(ns zaex.rel-tools
+(ns zaex.elaborate.set
   "Most of the source has been shamelessly taken from clojure.set/join 
   and then enhanced with transients and 1-arty support."
   (:require [clojure.set :refer [intersection
@@ -8,8 +8,7 @@
                                  rename-keys
                                  map-invert
                                  index
-                                 union]]
-            #_[net.cgrand.xforms :as x]))
+                                 union]]))
 
 
 (defn join
@@ -92,26 +91,19 @@
   "Can be used with transducers as it has 1-arty support" 
   ([rel] rel)
   ([xrel yrel]
-   (if (and (seq xrel) (seq yrel))
-     (let [ks (intersection (set (keys (first xrel))) (set (keys (first yrel))))
-           idx (index xrel ks)]
+   (let [ks (intersection (set (keys (first xrel)))
+                          (set (keys (first yrel))))]
+     (left-join xrel yrel (zipmap ks ks))))
+  ([xrel yrel km]
+   (if (and (set? xrel) (set? yrel))
+     (let [k (map-invert km)
+           idx (index xrel (vals k))]
        (persistent!
         (reduce (fn [notfound x]
-                  (if-let [found (idx (select-keys x ks))]
+                  (if-let [found (idx (select-keys x k))]
                     (reduce disj! notfound found)
                     (conj! notfound x)))
                 (transient (set xrel))
-                yrel)))
-     #{}))
-  ([xrel yrel km] 
-   (let [k (map-invert km)
-         idx (index xrel (vals k))]
-     (persistent!
-      (reduce (fn [notfound x]
-                (if-let [found (idx (select-keys x k))]
-                  (reduce disj! notfound found)
-                  (conj! notfound x)))
-              (transient (set xrel))
-              yrel)))))
+                yrel))))))
 
 
