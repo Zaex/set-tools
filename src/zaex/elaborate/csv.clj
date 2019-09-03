@@ -12,9 +12,9 @@
                 
 (defn rel>csv
   "assumes all rows have the same columns"
-  [[{:as columns} :as rel] & {:keys [csv-column-fn]
-                              :or {csv-column-fn name}}]
-  (let [cols (mapv csv-column-fn (keys columns))]
+  [[{:as columns} :as rel] & {:keys [column-fn]
+                              :or {column-fn name}}]
+  (let [cols (mapv column-fn (keys columns))]
     (->> rel
          (into [cols] (map (comp vec vals))))))
 

@@ -1,2 +1,5 @@
-# rel-tools
-Currently in alpha. A few extra set tools extending and piggybacking on the clojure.set library.
+# elaborate
+
+A few extra tools that are extensions to the base packages clojure provides.
+
+Currently in alpha, so do not use in production. You have been warned.
